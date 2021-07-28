@@ -1,17 +1,25 @@
+import IFlight from "../Interfaces/IFlight";
+import { makeAutoObservable } from "mobx";
+import FlightService from "../Services/FlightService";
 
-    import { IFlight } from '../Interfaces';
-    import { makeAutoObservable } from "mobx";
-    import GetAll from '../Services/Get' 
+class FlightById {
+  flight: IFlight = {
+    startAirport: "",
+    endAirport: "",
+    startTime: "",
+    duration: "",
+    id: 0,
+  };
 
-    class FlightById{
-        
-    flight:IFlight = {startAirport:'', endAirport:'', startTime:'', duration:'', id:0 }
-    flightFromWebApi =  GetAll.GetFlightById('https://localhost:44387/api/flights',1).then(res => {this.flight = res.data})
+  public async getFlight(id: number = 1) {
+    FlightService.GetFlightById(id).then((result) => {
+      this.flight = result.data;
+    });
+  }
 
-        
-    constructor(){
-        makeAutoObservable(this)
-    }
-    
-    }
-    export default new FlightById();
+  constructor() {
+    makeAutoObservable(this);
+  }
+}
+
+export default new FlightById();

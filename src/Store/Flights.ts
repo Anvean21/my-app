@@ -1,24 +1,32 @@
-import { IFlight } from '../Interfaces';
+import IFlight from "../Interfaces/IFlight";
 import { makeAutoObservable } from "mobx";
-import GetAll from '../Services/Get'
+import FlightService from "../Services/FlightService";
 
-class Flights{
-    
-    flights:IFlight[] = [];
-    flightsFromWebApi =  GetAll.GetFlights('https://localhost:44387/api/flights').then(res => {this.flights = res.data.slice()})
+class Flights {
+  flights: IFlight[] = [];
+  pagesCount: number = 0;
+  totalCount: number = 0;
 
-    
-constructor(){
-    makeAutoObservable(this)
-}
+  public async searchedData(
+    pageNumber: number,
+    sorting?: number,
+    property?: string,
+    seacrhData?: string
+  ) {
+    FlightService.GetFlights(pageNumber, sorting, property, seacrhData).then(
+      (result) => {
+        this.flights = result.data.flights;
+        this.pagesCount = result.data.pagesCount;
+        this.totalCount = result.data.totalItems;
+      }
+    );
+  }
+  constructor() {
+    makeAutoObservable(this);
+  }
 
-addFlight(){
-
-}
-removeFlight(id:number){
-    //Тут можно принимать flightsFromWebApi и обновлять.
-    // flightsFromWebApi = GetAll.DeleteFlightById('https://localhost:44387/api/flights',id).then(res => {this.flights = res.data.slice()})
-    GetAll.DeleteFlightById('https://localhost:44387/api/flights',id);
-}
+  removeFlight(id: number) {
+    FlightService.DeleteFlight(id);
+  }
 }
 export default new Flights();
